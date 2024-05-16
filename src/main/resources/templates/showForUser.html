@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Приветствие</title>
+</head>
+<body>
+<h1>Привет, <span th:text="${username}">Имя пользователя</span>!</h1>
+<br>
+<h1>Твой майл, <span th:text="${mail}">Майл пользователя</span>!</h1>
+<br>
+<a th:href="@{/logout}">Logout</a>
+</body>
+</html>
