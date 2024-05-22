@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.UserRepo;
+package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -7,11 +7,8 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Optional;
 
-;
-
 @Repository
 public class UserDaoImpl implements UserDao {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -24,11 +21,9 @@ public class UserDaoImpl implements UserDao {
         return entityManager.find(User.class, id);
     }
 
-
     @Override
     public User getMail(String mail) {
-        String jpql = "SELECT u FROM User u WHERE u.mail = :mail";// u - возвращаем Object
-        TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.mail = :mail", User.class);
         query.setParameter("mail", mail);
         try {
             return query.getSingleResult();
@@ -39,8 +34,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String getEmailByUsername(String username) {
-        String jpql = "SELECT u.mail FROM User u WHERE u.name = :name";
-        Query query = entityManager.createQuery(jpql, String.class);
+        Query query = entityManager.createQuery("SELECT u.mail FROM User u WHERE u.name = :name", String.class);
         query.setParameter("name", username);
         return (String) query.getSingleResult();
     }

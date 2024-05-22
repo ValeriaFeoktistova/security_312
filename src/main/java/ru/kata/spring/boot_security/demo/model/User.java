@@ -1,8 +1,10 @@
 package ru.kata.spring.boot_security.demo.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
@@ -35,13 +37,14 @@ public class User {
         this.mail = mail;
     }
 
-    @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id",referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @Fetch(FetchMode.JOIN)
     private Collection<Role> roles;
 
-    public User(List<Role> roles) {this.roles = roles;////////////////////
+    public User(List<Role> roles) {this.roles = roles;
     }
 
     public User() {

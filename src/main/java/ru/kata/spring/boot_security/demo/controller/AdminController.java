@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.UserRepo.RoleDao;
+import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
@@ -14,11 +15,13 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+    private final RoleService roleService;
     private final UserService userService;
     private final RoleDao roleDao;
 
     @Autowired
-    public AdminController(UserService userService, RoleDao roleDao) {
+    public AdminController(RoleService roleService, UserService userService, RoleDao roleDao) {
+        this.roleService = roleService;
         this.userService = userService;
         this.roleDao = roleDao;
     }
@@ -32,14 +35,16 @@ public class AdminController {
     @GetMapping("/addNewUser")
     public String addNewUser(Model model) {
         model.addAttribute("user", new User());
-        List<Role> roles = roleDao.findAll();
+        List<Role> roles = roleService.findAll();
+        // List<Role> roles = roleDao.findAll();
         model.addAttribute("roles", roles);
         return "user-info";
     }
 
     @PostMapping("/create")
     public String saveUser(@ModelAttribute("user") User user, @RequestParam("username") String name, @RequestParam("roleIds") List<Long> roleIds) {
-        List<Role> rolesAll = userService.getRolesById(roleIds);
+        List<Role> rolesAll = roleService.getRolesById(roleIds);
+        // List<Role> rolesAll = userService.getRolesById(roleIds);
         user.setName(name);
         user.setRoles(rolesAll);
         userService.createOreUpdateUser(user);
@@ -50,14 +55,15 @@ public class AdminController {
     public String update(@RequestParam("userId") long id, Model model) {
         User user = userService.getUser(id);
         model.addAttribute("user", user);
-        model.addAttribute("roles", roleDao.findAll());
+        model.addAttribute("roles", roleService.findAll());
+        //model.addAttribute("roles", roleDao.findAll());
         return "/user-info";
 
     }
 
     @PostMapping("/update")
     public String update(@ModelAttribute("user") User user, @RequestParam("roleIds") List<Long> roleIds) {
-        List<Role> rolesAll = userService.getRolesById(roleIds);
+        List<Role> rolesAll = roleService.getRolesById(roleIds);
         user.setRoles(rolesAll);
         userService.createOreUpdateUser(user);
         return "redirect:/admin/admin";
